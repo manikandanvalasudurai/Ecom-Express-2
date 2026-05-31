@@ -6,6 +6,7 @@ import com.example.productservice.exception.ProductNotFoundException;
 import com.example.productservice.models.Product;
 import com.example.productservice.services.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +16,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/products")
-@RequiredArgsConstructor
 public class ProductController {
-
     private final ProductService productService;
+
+    public ProductController(@Qualifier("fakeStoreProductService") ProductService productService){
+        this.productService = productService;
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Product> getSingleProduct(@PathVariable("id") Long productId) throws ProductNotFoundException {
@@ -35,7 +38,7 @@ public class ProductController {
         return responseEntity;
     }
 
-    @GetMapping("")
+    @GetMapping("/")
     public List<Product> getAllProducts(){
        return this.productService.getAllProducts();
     }

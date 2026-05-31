@@ -18,7 +18,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Primary
 public class FakeStoreProductService implements ProductService {
     private final WebClient webClient;
 
@@ -46,6 +45,7 @@ public class FakeStoreProductService implements ProductService {
                 .uri("/products/")
                 .retrieve()
                 .bodyToMono(FakeStoreProductDto[].class) // We skip toEntity() if we only need the body
+                .onErrorReturn(new FakeStoreProductDto[0])
                 .block(); // Blocking to return a List
 
         // 2. Defensive check: If API returns nothing, return empty list instead of NullPointerException
