@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,4 +24,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     //Custom Query
     @Query("select title from products p where id = :productId")
     Optional<Product> findOnlyProductTitleById(Long productId);
+    //update + insert = upsert
+    Product save(Product product);
 }

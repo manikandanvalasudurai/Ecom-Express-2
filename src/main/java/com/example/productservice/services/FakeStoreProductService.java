@@ -5,16 +5,10 @@ import com.example.productservice.exception.ProductNotFoundException;
 import com.example.productservice.models.Category;
 import com.example.productservice.models.Product;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Primary;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,12 +16,12 @@ public class FakeStoreProductService implements ProductService {
     private final WebClient webClient;
 
         @Override
-        public Product getSingleProduct(Long productId) throws ProductNotFoundException {
+        public Optional<Product> getSingleProduct(Long productId) throws ProductNotFoundException {
             FakeStoreProductDto response = webClient.get().uri("/products/" + productId).retrieve().bodyToMono(FakeStoreProductDto.class).block();
             if(response == null){
                 throw new ProductNotFoundException(productId, productId  + " Does not Exists");
             }
-            return convertDtoToProduct(response);
+            return Optional.of(convertDtoToProduct(response));
         }
 
     @Override

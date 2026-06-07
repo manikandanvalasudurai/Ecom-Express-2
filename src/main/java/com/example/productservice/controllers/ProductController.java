@@ -1,25 +1,23 @@
 package com.example.productservice.controllers;
 
-import com.example.productservice.dtos.ExceptionDto;
-import com.example.productservice.dtos.ProductNotFoundExceptionDto;
+import com.example.productservice.exception.CategoryNotFoundException;
 import com.example.productservice.exception.ProductNotFoundException;
 import com.example.productservice.models.Product;
 import com.example.productservice.services.ProductService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/products")
 public class ProductController {
     private final ProductService productService;
 
-    public ProductController(@Qualifier("fakeStoreProductService") ProductService productService){
+    public ProductController(@Qualifier("selfProductService") ProductService productService){
         this.productService = productService;
     }
 
@@ -28,7 +26,8 @@ public class ProductController {
         ResponseEntity responseEntity = null;
         Product products = null;
         try{
-            products = this.productService.getSingleProduct(productId);
+            Optional<Product> optionalProduct = this.productService.getSingleProduct(productId);
+            products = optionalProduct.orElseThrow(() -> new ProductNotFoundException(productId, productId + " doesn't exists"));
             responseEntity = new ResponseEntity<>(products, HttpStatus.OK);
         }
         catch (Exception ex){
@@ -44,13 +43,14 @@ public class ProductController {
     }
 
     @PostMapping("/")
-    public Product createProduct(@RequestBody Product product){
-        return new Product();
+    public Product createProduct(@RequestBody Product product) throws CategoryNotFoundException {
+        System.out.println("Controller called........");
+        return productService.createProduct(product);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable("id") Long productId){
-        return null;
+    public boolean deleteProduct(@PathVariable("id") Long productId) throws ProductNotFoundException {
+        return productService.deleteProduct(productId);
     }
 
     @PutMapping("/{id}")
@@ -64,12 +64,12 @@ public class ProductController {
     }
 
 //    Check for priority vs @controlleradvice
-    @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<ProductNotFoundExceptionDto> handleProductNotFoundException(ProductNotFoundException ex){
-        ProductNotFoundExceptionDto productNotFoundExceptionDto = new ProductNotFoundExceptionDto();
-        productNotFoundExceptionDto.setProductId(ex.getProductId());
-        productNotFoundExceptionDto.setMessage(ex.getMessage() + " Came from controller");
-        return new ResponseEntity<>(productNotFoundExceptionDto , HttpStatus.NOT_FOUND);
-    }
+//    @ExceptionHandler(ProductNotFoundException.class)
+//    public ResponseEntity<ProductNotFoundExceptionDto> handleProductNotFoundException(ProductNotFoundException ex){
+//        ProductNotFoundExceptionDto productNotFoundExceptionDto = new ProductNotFoundExceptionDto();
+//        productNotFoundExceptionDto.setProductId(ex.getProductId());
+//        productNotFoundExceptionDto.setMessage(ex.getMessage() + " Came from controller");
+//        return new ResponseEntity<>(productNotFoundExceptionDto , HttpStatus.NOT_FOUND);
+//    }
 }
 
