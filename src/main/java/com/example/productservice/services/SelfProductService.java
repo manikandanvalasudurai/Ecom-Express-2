@@ -39,15 +39,15 @@ public class SelfProductService implements ProductService{
         if(category == null){
             throw new CategoryNotFoundException("Product can't be created with out category.Please try again with Category");
         }
-        Optional<Category> optionalCategory = categoryRepository.findByTitle(category.getTitle());
-        if(optionalCategory.isEmpty()){
-            //There is no category in the DB with the given title
-            //create a category obj and save DB
-            category = categoryRepository.save(category);
-        } else {
-            category = optionalCategory.get();
-        }
-        product.setCategory(category);
+//        Optional<Category> optionalCategory = categoryRepository.findByTitle(category.getTitle());
+//        if(optionalCategory.isEmpty()){
+//            //There is no category in the DB with the given title
+//            //create a category obj and save DB
+//            category = categoryRepository.save(category);
+//        } else {
+//            category = optionalCategory.get();
+//        }
+//        product.setCategory(category);
         return productRepository.save(product);
     }
 
