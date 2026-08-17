@@ -5,6 +5,7 @@ import com.example.productservice.exception.ProductNotFoundException;
 import com.example.productservice.models.Category;
 import com.example.productservice.models.Product;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -12,6 +13,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Primary
 public class FakeStoreProductService implements ProductService {
     private final WebClient webClient;
 
