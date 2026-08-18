@@ -1,24 +1,70 @@
 package com.example.productservice.controllers;
 
+import com.example.productservice.exception.ProductNotFoundException;
+import com.example.productservice.models.Product;
 import com.example.productservice.services.ProductService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class ProductControllerTest {
-    @Mock
-    public ProductService productService;
+
+    @MockitoBean
+    private ProductService productService;
+
     @Autowired
-    public ProductController productController;
+    private ProductController productController;
 
     @Test
-    public void testGetSingleProductPositiveCase(){
+    @DisplayName("Should return product when valid product ID is provided")
+    void testGetSingleProductPositiveCase() throws ProductNotFoundException {
+
+        // Arrange
+        Long productId = 1L;
+
+        Product serviceProduct = new Product();
+        serviceProduct.setId(productId);
+        serviceProduct.setTitle("Iphone 12");
+        serviceProduct.setPrice(60000.1);
+
+        when(productService.getSingleProduct(productId))
+                .thenReturn(Optional.of(serviceProduct));
+
+        // Act
+        Product actualProduct =
+                productController.getSingleProduct(productId).getBody();
+
+        // Assert
+        assertNotNull(actualProduct);
+        assertEquals(1L, actualProduct.getId());
+        assertEquals("Iphone 12", actualProduct.getTitle());
+        assertEquals(60000.1, actualProduct.getPrice(), 0.001);
+
+        verify(productService).getSingleProduct(1L);
     }
 
     @Test
-    public void testGetSingleProductNegativeCase(){}
+    @DisplayName("Should throw ProductNotFoundException when product is not found")
+    void testGetSingleProductNegativeCase() {
+
+        // Arrange
+        // TODO
+
+        // Act
+        // TODO
+
+        // Assert
+        // TODO
+    }
+
+    // TODO: Write test cases for getAllProducts()
 }
