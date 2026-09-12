@@ -14,4 +14,9 @@ public class ApplicationConfig {
     public WebClient webClient(){
         return WebClient.builder().baseUrl(baseUrl).build();
     }
+
+    @Bean("authServiceWebClient")
+    public WebClient authServiceWebClient(@Value("${authservice-base-url}") String authServiceBaseUrl){
+        return WebClient.builder().baseUrl(authServiceBaseUrl).build();
+    }
 }

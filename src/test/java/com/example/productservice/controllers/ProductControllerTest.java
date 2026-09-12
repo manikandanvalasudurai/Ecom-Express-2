@@ -1,8 +1,11 @@
 package com.example.productservice.controllers;
 
+import com.example.productservice.commons.AuthCommons;
+import com.example.productservice.dtos.UserDto;
 import com.example.productservice.exception.ProductNotFoundException;
 import com.example.productservice.models.Product;
 import com.example.productservice.services.ProductService;
+import net.bytebuddy.utility.RandomString;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,9 @@ class ProductControllerTest {
     @MockitoBean
     private ProductService productService;
 
+    @MockitoBean
+    private AuthCommons authCommons;
+
     @Autowired
     private ProductController productController;
 
@@ -36,12 +42,20 @@ class ProductControllerTest {
         serviceProduct.setTitle("Iphone 12");
         serviceProduct.setPrice(60000.1);
 
+        UserDto userDto = new UserDto();
+        userDto.setId(1L);
+
+        String token = RandomString.make();
+
+        when(authCommons.validateToken(token))
+                .thenReturn(userDto);
+
         when(productService.getSingleProduct(productId))
                 .thenReturn(Optional.of(serviceProduct));
 
         // Act
         Product actualProduct =
-                productController.getSingleProduct(productId).getBody();
+                productController.getSingleProduct(productId , token).getBody();
 
         // Assert
         assertNotNull(actualProduct);

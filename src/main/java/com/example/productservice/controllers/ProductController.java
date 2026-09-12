@@ -1,10 +1,12 @@
 package com.example.productservice.controllers;
 
+import com.example.productservice.commons.AuthCommons;
+import com.example.productservice.dtos.UserDto;
 import com.example.productservice.exception.CategoryNotFoundException;
+import com.example.productservice.exception.InvalidTokenException;
 import com.example.productservice.exception.ProductNotFoundException;
 import com.example.productservice.models.Product;
 import com.example.productservice.services.ProductService;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,14 +18,21 @@ import java.util.Optional;
 @RequestMapping("/products")
 public class ProductController {
     private final ProductService productService;
+    private final AuthCommons authCommons;
 
-    public ProductController(ProductService productService){
+    public ProductController(ProductService productService, AuthCommons authCommons){
         this.productService = productService;
+        this.authCommons = authCommons;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getSingleProduct(@PathVariable("id") Long productId) throws ProductNotFoundException {
-        ResponseEntity responseEntity = null;
+    public ResponseEntity<Product> getSingleProduct(@PathVariable("id") Long productId , @RequestHeader("token") String token) {
+        UserDto userDto = authCommons.validateToken(token);
+        if (userDto == null) {
+            throw new InvalidTokenException("Invalid token");
+        }
+
+        ResponseEntity<Product> responseEntity = null;
         Product products = null;
         try{
             Optional<Product> optionalProduct = this.productService.getSingleProduct(productId);

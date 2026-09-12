@@ -1,5 +1,6 @@
 package com.example.productservice.controllers;
 
+import com.example.productservice.commons.AuthCommons;
 import com.example.productservice.models.Product;
 import com.example.productservice.services.ProductService;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,9 @@ class ProductControllerMockMvcTest {
 
     @MockitoBean
     private ProductService productService;
+
+    @MockitoBean
+    private AuthCommons authCommons;
 
     @Test
     void testGetAllProducts() throws Exception {
