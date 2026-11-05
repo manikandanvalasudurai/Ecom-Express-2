@@ -14,16 +14,16 @@ public class AuthCommons {
         this.webClient = webClient;
     }
 
-    public UserDto validateToken(String token) {
-        try {
-            return webClient.get()
-                    .uri("/auth/validate")
-                    .header("token", token)
-                    .retrieve()
-                    .bodyToMono(UserDto.class)
-                    .block();
-        } catch (WebClientResponseException ex) {
-            return null;
-        }
-    }
+//    public UserDto validateToken(String token) {
+//        try {
+//            return webClient.get()
+//                    .uri("/auth/validate")
+//                    .header("token", token)
+//                    .retrieve()
+//                    .bodyToMono(UserDto.class)
+//                    .block();
+//        } catch (WebClientResponseException ex) {
+//            return null;
+//        }
+//    }
 }

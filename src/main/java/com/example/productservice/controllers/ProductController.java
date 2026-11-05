@@ -26,11 +26,11 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getSingleProduct(@PathVariable("id") Long productId , @RequestHeader("token") String token) {
-        UserDto userDto = authCommons.validateToken(token);
-        if (userDto == null) {
-            throw new InvalidTokenException("Invalid token");
-        }
+    public ResponseEntity<Product> getSingleProduct(@PathVariable("id") Long productId) {
+//        UserDto userDto = authCommons.validateToken(token);
+//        if (userDto == null) {
+//            throw new InvalidTokenException("Invalid token");
+//        }
 
         ResponseEntity<Product> responseEntity = null;
         Product products = null;

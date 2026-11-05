@@ -7,11 +7,13 @@ import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @JsonPropertyOrder({"title","price","description","image","category"})
 @Entity(name = "products")
-public class Product extends BaseModel {
+public class Product extends BaseModel implements Serializable {
 //    @Setter If we want to use specifically to one field at class level we can provide getter at field which required only we can provide setter
     private String title;
     private  Double price;

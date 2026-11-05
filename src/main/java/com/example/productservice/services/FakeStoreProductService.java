@@ -6,6 +6,7 @@ import com.example.productservice.models.Category;
 import com.example.productservice.models.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -16,15 +17,37 @@ import java.util.*;
 @Primary
 public class FakeStoreProductService implements ProductService {
     private final WebClient webClient;
+    private final RedisTemplate<String,Object> redisTemplate;
 
-        @Override
-        public Optional<Product> getSingleProduct(Long productId) throws ProductNotFoundException {
-            FakeStoreProductDto response = webClient.get().uri("/products/" + productId).retrieve().bodyToMono(FakeStoreProductDto.class).block();
-            if(response == null){
-                throw new ProductNotFoundException(productId, productId  + " Does not Exists");
-            }
-            return Optional.of(convertDtoToProduct(response));
+    @Override
+    public Optional<Product> getSingleProduct(Long productId) throws ProductNotFoundException {
+        String key = "PRODUCT_" + productId;
+
+        // 1. Check Cache
+        Product cachedProduct = (Product) redisTemplate.opsForValue().get(key);
+        if (cachedProduct != null) {
+            return Optional.of(cachedProduct);
         }
+
+        // 2. Fetch from API if not in cache
+        FakeStoreProductDto response = webClient.get()
+                .uri("/products/" + productId)
+                .retrieve()
+                .bodyToMono(FakeStoreProductDto.class)
+                .block();
+
+        if (response == null) {
+            throw new ProductNotFoundException(productId, productId  + " Does not Exists");
+        }
+
+        // 3. Convert DTO to Product
+        Product newProduct = convertDtoToProduct(response);
+
+        // 4. Save the actual converted product to Redis (NOT the null variable)
+        redisTemplate.opsForValue().set(key, newProduct);
+
+        return Optional.of(newProduct);
+    }
 
     @Override
     public List<Product> getAllProducts() {
