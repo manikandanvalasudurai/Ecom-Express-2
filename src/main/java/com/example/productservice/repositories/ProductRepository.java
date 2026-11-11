@@ -1,10 +1,11 @@
 package com.example.productservice.repositories;
 import com.example.productservice.models.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +24,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllByCategory_Title(String categoryTitle);
 
     //Custom Query
-    @Query("select title from products p where id = :productId")
+//    @Query("select title from products p where id = :productId")
     Optional<Product> findOnlyProductTitleById(Long productId);
     //update + insert = upsert
     Product save(Product product);
@@ -32,11 +33,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("select p from products p where p.id = :productId") //Since we overrided the product table name it HQL will access product table as products only
     Product findProductByGivenIdHQL(@Param("productId") Long productId);
 
-
     //SQL Query
     @Query(
             value = "select * from products where id = :productId",
             nativeQuery = true // means i am writing aql query don't do intervention on this
     )
     Product findProductByGivenIdSQL(@Param("productId") Long productId);
+
+    Page<Product> findByTitleContainingIgnoreCase(String title, PageRequest pageable);
 }

@@ -6,6 +6,11 @@ import com.example.productservice.models.Product;
 import com.example.productservice.repositories.CategoryRepository;
 import com.example.productservice.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.querydsl.QPageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +18,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Primary
 public class SelfProductService implements ProductService{
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
@@ -74,5 +80,13 @@ public class SelfProductService implements ProductService{
     @Override
     public void demoFunctionality() {
         ProductService.super.demoFunctionality();
+    }
+
+    @Override
+    public Page<Product> getProductByTitle(String title, int pageNumber, int pageSize) {
+        System.out.println("service called with : " + title);
+        return productRepository.findByTitleContainingIgnoreCase(title,PageRequest.of(pageNumber, pageSize,
+                Sort.by(Sort.Direction.ASC,"price")
+                        .by(Sort.Direction.DESC,"title")));
     }
 }

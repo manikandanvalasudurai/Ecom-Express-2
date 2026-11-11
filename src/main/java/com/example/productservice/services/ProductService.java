@@ -3,6 +3,7 @@ package com.example.productservice.services;
 import com.example.productservice.exception.CategoryNotFoundException;
 import com.example.productservice.exception.ProductNotFoundException;
 import com.example.productservice.models.Product;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,5 +18,6 @@ public interface ProductService {
     //default method for  is there any one particular class only needed when that implemented by this interface
     //no need to implement this method to all classes which implemented by this interface
     default void demoFunctionality(){}
+    Page<Product> getProductByTitle(String title, int pageNumber, int pageSize);
 }
 

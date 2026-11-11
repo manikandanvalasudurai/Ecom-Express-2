@@ -6,6 +6,7 @@ import com.example.productservice.models.Category;
 import com.example.productservice.models.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -14,7 +15,6 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Primary
 public class FakeStoreProductService implements ProductService {
     private final WebClient webClient;
     private final RedisTemplate<String,Object> redisTemplate;
@@ -96,6 +96,11 @@ public class FakeStoreProductService implements ProductService {
     @Override
     public Product updateProduct(Long productId) {
         return null;
+    }
+
+    @Override
+    public Page<Product> getProductByTitle(String title, int pageNumber, int pageSize) {
+        return Page.empty();
     }
 
     private Product convertDtoToProduct(FakeStoreProductDto dto){

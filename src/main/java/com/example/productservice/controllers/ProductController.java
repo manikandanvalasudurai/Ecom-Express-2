@@ -7,6 +7,7 @@ import com.example.productservice.exception.InvalidTokenException;
 import com.example.productservice.exception.ProductNotFoundException;
 import com.example.productservice.models.Product;
 import com.example.productservice.services.ProductService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -80,5 +81,11 @@ public class ProductController {
 //        productNotFoundExceptionDto.setMessage(ex.getMessage() + " Came from controller");
 //        return new ResponseEntity<>(productNotFoundExceptionDto , HttpStatus.NOT_FOUND);
 //    }
+
+    @GetMapping("/getProductByTitle/{title}/{pageNumber}/{pageSize}")
+    public Page<Product> getProductByTitle(@PathVariable String title, @PathVariable int pageNumber, @PathVariable int pageSize){
+        System.out.println("controller called with : " + title);
+        return productService.getProductByTitle(title,pageNumber,pageSize);
+    }
 }
 
